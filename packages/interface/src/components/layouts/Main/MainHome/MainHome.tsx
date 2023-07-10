@@ -1,5 +1,6 @@
-import { AddingButton } from "@/features/battle/components/AddingButton";
+import { AddButton } from "@/features/battle/components/AddButton";
 import { BattleCard } from "@/features/battle/components/BattleCard";
+import { BattleModal } from "@/features/battle/components/BattleModal";
 import { useBattlesValue } from "@/hooks/useBattles";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
@@ -26,14 +27,16 @@ export const MainHome = ({ className }: MainHomeProps) => {
         "mb-[20px]",
       )}
     >
-      <AddingButton />
+      <AddButton />
+      <BattleModal />
       <div className={clsx("flex", "flex-wrap", "justify-evenly", "w-[100%]")}>
-        {battles.map((battle) => {
+        {battles.map((battle, index) => {
           return (
             <BattleCard
               key={uuid()}
               className={clsx("w-[40%]", "m-[5px]")}
               battle={battle}
+              index={index}
             />
           );
         })}
