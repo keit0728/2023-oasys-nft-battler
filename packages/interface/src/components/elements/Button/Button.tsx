@@ -3,6 +3,7 @@ import clsx from "clsx";
 
 export type ButtonProps = {
   variant?: "primary" | "secondary";
+  rounded?: "rounded-lg" | "rounded-full";
   onClick?: () => void;
 } & BaseProps;
 
@@ -14,6 +15,7 @@ export const Button = ({
   className,
   children,
   variant = "primary",
+  rounded = "rounded-lg",
   onClick,
 }: ButtonProps) => {
   return (
@@ -21,10 +23,10 @@ export const Button = ({
       className={clsx(
         className,
         variants[variant],
+        rounded,
         "font-bold",
-        "px-[16px]",
+        rounded === "rounded-full" ? "px-[10px]" : "px-[16px]",
         "py-[10px]",
-        "rounded-lg",
       )}
       onClick={onClick}
     >

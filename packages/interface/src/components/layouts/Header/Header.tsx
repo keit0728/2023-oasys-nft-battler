@@ -1,5 +1,5 @@
 import { Logo } from "@/components/elements/Logo";
-import { LoginButton } from "@/features/login/components";
+import { LoginButton } from "@/features/login/components/LoginButton";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 
