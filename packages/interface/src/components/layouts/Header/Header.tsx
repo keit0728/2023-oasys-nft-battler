@@ -1,7 +1,9 @@
 import { Logo } from "@/components/elements/Logo";
 import { LoginButton } from "@/features/login/components/LoginButton";
+import { LoginedInfo } from "@/features/login/components/LoginedInfo";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
+import { useAccount } from "wagmi";
 
 export type HeaderProps = {} & BaseProps;
 
@@ -10,6 +12,7 @@ export type HeaderProps = {} & BaseProps;
  * @keit0728
  */
 export const Header = ({ className }: HeaderProps) => {
+  const { isConnected } = useAccount();
   return (
     <header
       className={clsx(
@@ -26,7 +29,7 @@ export const Header = ({ className }: HeaderProps) => {
       )}
     >
       <Logo />
-      <LoginButton />
+      {isConnected ? <LoginedInfo /> : <LoginButton />}
     </header>
   );
 };
