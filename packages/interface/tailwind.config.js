@@ -17,6 +17,7 @@ module.exports = {
         headerColor: "#010409",
         bgColor: "#0D1117",
         txtWhite: "#E6EDF3",
+        inputColor: "#020408",
       },
     },
   },

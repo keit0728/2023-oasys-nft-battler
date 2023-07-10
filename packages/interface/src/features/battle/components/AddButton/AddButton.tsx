@@ -3,13 +3,13 @@ import { Button } from "@/components/elements/Button";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 
-export type AddingButtonProps = {} & BaseProps;
+export type AddButtonProps = {} & BaseProps;
 
 /**
- * AddingButton
+ * AddButton
  * @keit0728
  */
-export const AddingButton = ({ className }: AddingButtonProps) => {
+export const AddButton = ({ className }: AddButtonProps) => {
   return (
     <Button
       className={clsx(className, "fixed", "top-[75px]", "right-[10px]")}

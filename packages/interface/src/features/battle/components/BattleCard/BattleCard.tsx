@@ -1,19 +1,32 @@
 import Image from "next/image";
 import { dummyImages } from "@/const/dummy";
 import { BattleModel } from "@/models/BattleModel";
-import { Address } from "@/types/Address";
+import { battleModalOpenedState } from "@/stores/battleModalOpenedState";
+import { selectedBattleIndexState } from "@/stores/selectedBattleIndexState";
 import { BaseProps } from "@/types/BaseProps";
-import { TokenId } from "@/types/TokenId";
+import { getParticipantCount } from "@/utils/util";
 import clsx from "clsx";
 import uuid from "react-uuid";
+import { useSetRecoilState } from "recoil";
 
-export type BattleCardProps = { battle: BattleModel } & BaseProps;
+export type BattleCardProps = {
+  battle: BattleModel;
+  index: number;
+} & BaseProps;
 
 /**
  * BattleCard
  * @keit0728
  */
-export const BattleCard = ({ className, battle }: BattleCardProps) => {
+export const BattleCard = ({ className, battle, index }: BattleCardProps) => {
+  const setBattleModalOpened = useSetRecoilState(battleModalOpenedState);
+  const setSelectedBattleIndex = useSetRecoilState(selectedBattleIndexState);
+
+  const handleClick = () => {
+    setSelectedBattleIndex(index);
+    setBattleModalOpened(true);
+  };
+
   return (
     <button
       className={clsx(
@@ -28,6 +41,7 @@ export const BattleCard = ({ className, battle }: BattleCardProps) => {
         "hover:bg-primaryHover",
         "hover:border-primaryHoverBorder",
       )}
+      onClick={handleClick}
     >
       <div className={clsx("mb-[10px]")}>
         <div className={clsx("flex", "justify-between")}>
@@ -35,7 +49,7 @@ export const BattleCard = ({ className, battle }: BattleCardProps) => {
             {battle.title}
           </div>
           <div className={clsx("")}>
-            {_getParticipantCount(battle.participantTokenIds)} /{" "}
+            {getParticipantCount(battle.participantTokenIds)} /{" "}
             {battle.maxParticipantCount}
           </div>
         </div>
@@ -59,15 +73,4 @@ export const BattleCard = ({ className, battle }: BattleCardProps) => {
       </div>
     </button>
   );
-};
-
-const _getParticipantCount = (
-  participantTokenIds: Map<Address, TokenId[]>,
-): number => {
-  const keys = Array.from(participantTokenIds.keys());
-  let participantCount = 0;
-  for (let i = 0; i < keys.length; i++) {
-    participantCount += participantTokenIds.get(keys[i])?.length ?? 0;
-  }
-  return participantCount;
 };
