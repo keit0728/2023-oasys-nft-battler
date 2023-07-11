@@ -1,29 +1,28 @@
-import { ChangeEvent } from "react";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 
-export type InputProps = {
+export type TextAreaProps = {
   value?: string;
   placeholder?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 } & BaseProps;
 
 /**
- * Input
+ * TextArea
  * @keit0728
  */
-export const Input = ({
+export const TextArea = ({
   className,
   value,
   placeholder,
   onChange,
-}: InputProps) => {
+}: TextAreaProps) => {
   return (
-    <input
+    <textarea
       className={clsx(className, "p-[10px]", "bg-inputColor", "rounded-lg")}
       value={value}
-      placeholder={placeholder}
       onChange={onChange}
+      placeholder={placeholder}
     />
   );
 };

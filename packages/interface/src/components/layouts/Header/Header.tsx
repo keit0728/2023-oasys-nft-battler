@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Logo } from "@/components/elements/Logo";
 import { LoginButton } from "@/features/login/components/LoginButton";
 import { LoginedInfo } from "@/features/login/components/LoginedInfo";
+import { useLayoutEffectOfSSR } from "@/hooks/useLayoutEffectOfSSR";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 import { useAccount } from "wagmi";
@@ -12,7 +14,13 @@ export type HeaderProps = {} & BaseProps;
  * @keit0728
  */
 export const Header = ({ className }: HeaderProps) => {
-  const { isConnected } = useAccount();
+  const { address } = useAccount();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useLayoutEffectOfSSR(() => {
+    setHasMounted(true);
+  }, []);
+
   return (
     <header
       className={clsx(
@@ -29,7 +37,7 @@ export const Header = ({ className }: HeaderProps) => {
       )}
     >
       <Logo />
-      {isConnected ? <LoginedInfo /> : <LoginButton />}
+      {hasMounted ? address ? <LoginedInfo /> : <LoginButton /> : <></>}
     </header>
   );
 };

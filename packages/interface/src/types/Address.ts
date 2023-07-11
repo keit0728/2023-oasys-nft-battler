@@ -1,1 +1,1 @@
-export type Address = string;
+export type Address = `0x${string}`;

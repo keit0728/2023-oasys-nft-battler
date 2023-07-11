@@ -43,7 +43,7 @@ export const BattleCard = ({ className, battle, index }: BattleCardProps) => {
       )}
       onClick={handleClick}
     >
-      <div className={clsx("mb-[10px]")}>
+      <div className={clsx("mb-[50px]")}>
         <div className={clsx("flex", "justify-between")}>
           <div className={clsx("font-bold", "text-xl", "mb-[10px]")}>
             {battle.title}
