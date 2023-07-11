@@ -1,11 +1,18 @@
 import { ClientBattle } from "@/features/battle/api/contracts/ClientBattle";
 import { BattleModel } from "@/models/BattleModel";
 import { BattlesState, battlesState } from "@/stores/battlesState";
+import { getParticipantTokenIdsMap } from "@/utils/util";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { Address } from "viem";
 
 export interface BattlesController {
   init: () => Promise<void>;
-  add: (battle: BattleModel) => Promise<void>;
+  create: (battle: BattleModel) => Promise<void>;
+  join: (
+    battleId: string,
+    participantNFT: Address,
+    participantTokenId: string,
+  ) => Promise<void>;
 }
 
 export const useBattlesValue = (): BattlesState => {
@@ -30,10 +37,16 @@ export const useBattlesController = (): BattlesController => {
     for (let i = 0; i < data.length; i++) {
       battles.push(
         BattleModel.create({
+          id: i.toString(),
           title: data[i].title,
           description: data[i].description,
           availableNFTs: data[i].availableNFTs,
           maxParticipantCount: data[i].maxParticipantCount,
+          participantTokenIdsMap: getParticipantTokenIdsMap(
+            data[i].availableNFTs,
+            data[i].participantNFTs,
+            data[i].participantTokenIds,
+          ),
         }),
       );
     }
@@ -41,18 +54,62 @@ export const useBattlesController = (): BattlesController => {
   };
 
   /**
-   * add
+   * create
+   * @param battle battle
    */
-  const add = async (battle: BattleModel): Promise<void> => {
+  const create = async (battle: BattleModel): Promise<void> => {
     const battleContract = ClientBattle.instance();
-    console.log(battle);
     await battleContract.create(battle);
-    setBattles((prevState) => [...prevState, battle]);
+    // TODO: #18 nonceを使って割り振られたバトルIDを取得
+    const totalBattle = await battleContract.getTotalBattle();
+    setBattles((prevState) => [
+      ...prevState,
+      battle.copyWith({ id: totalBattle.toString() }),
+    ]);
+  };
+
+  /**
+   * join
+   * @param battleId battleId
+   * @param participantNFT participantNFT
+   * @param participantTokenId participantTokenId
+   */
+  const join = async (
+    battleId: string,
+    participantNFT: Address,
+    participantTokenId: string,
+  ): Promise<void> => {
+    if (participantTokenId === "" || isNaN(Number(participantTokenId)))
+      throw new Error("Invalid tokenId");
+    const battleContract = ClientBattle.instance();
+    await battleContract.join(
+      BigInt(battleId),
+      participantNFT,
+      BigInt(participantTokenId),
+    );
+    setBattles((prevState) => {
+      return prevState.map((battle) => {
+        if (battle.id !== battleId) return battle;
+        console.log(battle.id);
+        const tokenIds = battle.participantTokenIdsMap.get(participantNFT)!;
+        console.log(tokenIds);
+        const newParticipantTokenIds = new Map(battle.participantTokenIdsMap);
+        console.log(newParticipantTokenIds);
+        newParticipantTokenIds.set(participantNFT, [
+          ...tokenIds,
+          participantTokenId,
+        ]);
+        return battle.copyWith({
+          participantTokenIdsMap: newParticipantTokenIds,
+        });
+      });
+    });
   };
 
   const controller: BattlesController = {
     init,
-    add,
+    create,
+    join,
   };
   return controller;
 };

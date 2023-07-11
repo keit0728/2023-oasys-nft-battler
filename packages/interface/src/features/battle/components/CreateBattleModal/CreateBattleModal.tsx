@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { AvailableNFTsInput } from "@/features/battle/components/AvailableNFTsInput";
 import { CreateButton } from "@/features/battle/components/CreateButton";
 import { DescriptionInput } from "@/features/battle/components/DescriptionInput";
@@ -22,7 +22,6 @@ export const CreateBattleModal = ({ className }: CreateBattleModalProps) => {
   const selectedBattleIndex = useRecoilValue(selectedBattleIndexState);
   const battle = useBattlesValue()[selectedBattleIndex];
   const [opened, setOpened] = useRecoilState(createBattleModalOpenedState);
-  const [selectedNFT, setSelectedNFT] = useState(0);
 
   if (!battle) return <></>;
   return (

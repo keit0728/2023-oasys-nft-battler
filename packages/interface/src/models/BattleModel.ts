@@ -9,18 +9,20 @@ export class BattleModel extends ObjectCopier {
    * ```
    * export const dummy = BattleModel.create({ title: "ウミガメのスープ" });
    * ```
+   * @param id id
    * @param title タイトル
    * @param description 詳細
    * @param availableNFTs 利用可能なNFT
    * @param maxParticipantCount 最大参加者数
-   * @param participantTokenIds 参加者のトークンID配列
+   * @param participantTokenIdsMap 参加者のトークンID
    */
   private constructor(
+    public readonly id: string = "",
     public readonly title: string = "",
     public readonly description: string = "",
     public readonly availableNFTs: Address[] = [],
     public readonly maxParticipantCount: number = 0,
-    public readonly participantTokenIds: Map<Address, TokenId[]> = new Map<
+    public readonly participantTokenIdsMap: Map<Address, TokenId[]> = new Map<
       Address,
       TokenId[]
     >(),

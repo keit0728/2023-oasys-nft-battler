@@ -11,7 +11,7 @@ export const dummyBattles = [
     description: "非公式プロモンマスターを決めます。",
     availableNFTs: [promon],
     maxParticipantCount: 5,
-    participantTokenIds: new Map<Address, TokenId[]>([
+    participantTokenIdsMap: new Map<Address, TokenId[]>([
       [promon, ["0", "1", "2", "3"]],
     ]),
   }),
@@ -20,7 +20,7 @@ export const dummyBattles = [
     description: "プロモンとLBRのクラン戦!!!",
     availableNFTs: [promon, lbr],
     maxParticipantCount: 5,
-    participantTokenIds: new Map<Address, TokenId[]>([
+    participantTokenIdsMap: new Map<Address, TokenId[]>([
       [promon, ["0"]],
       [lbr, ["0"]],
     ]),

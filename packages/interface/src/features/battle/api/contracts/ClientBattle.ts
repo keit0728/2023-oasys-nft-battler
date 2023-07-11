@@ -1,6 +1,7 @@
 import Battle from "../../../../../artifacts/Battle.json";
 import { ClientWallet } from "@/lib/wallet/ClientWallet";
 import { BattleModel } from "@/models/BattleModel";
+import { Address } from "@/types/Address";
 import { TransactionReceipt } from "viem";
 
 export class ClientBattle {
@@ -74,6 +75,31 @@ export class ClientBattle {
         battle.availableNFTs,
         battle.maxParticipantCount,
       ],
+    });
+    const hash = await walletClient.writeContract(request);
+    return await this._wallet.client.waitForTransactionReceipt({ hash });
+  };
+
+  /**
+   * join
+   * @param battleId battleId
+   * @param participantNFT participantNFT
+   * @param participantTokenId participantTokenId
+   * @return {Promise<TransactionReceipt>} receipt
+   */
+  join = async (
+    battleId: BigInt,
+    participantNFT: Address,
+    participantTokenId: BigInt,
+  ): Promise<TransactionReceipt> => {
+    const [walletClient, address] = await this._wallet.get();
+
+    const { request } = await this._wallet.client.simulateContract({
+      account: address,
+      address: process.env.NEXT_PUBLIC_BATTLE_CONTRACT as `0x${string}`,
+      abi: Battle.abi,
+      functionName: "join",
+      args: [battleId, participantNFT, participantTokenId],
     });
     const hash = await walletClient.writeContract(request);
     return await this._wallet.client.waitForTransactionReceipt({ hash });

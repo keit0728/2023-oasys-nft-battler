@@ -15,7 +15,7 @@ interface IBattle {
     address[] availableNFTs;
     uint32 maxParticipantCount;
     address[] participantNFTs;
-    uint256[] participanttokenIds;
+    uint256[] participantTokenIds;
     bool closed;
   }
 
@@ -78,5 +78,15 @@ interface IBattle {
     string memory description,
     address[] memory availableNFTs,
     uint32 maxParticipantCount
+  ) external;
+
+  /// @dev Join battle
+  /// @param battleId battleId
+  /// @param participantNFT participantNFT
+  /// @param participantTokenId participantTokenId
+  function join(
+    uint256 battleId,
+    address participantNFT,
+    uint256 participantTokenId
   ) external;
 }

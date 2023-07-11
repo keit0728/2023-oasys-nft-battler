@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
 import {IBattle} from "./IBattle.sol";
 
@@ -59,7 +60,7 @@ contract Battle is
 
   // key -> battleId
   /// @custom:oz-renamed-from _participanttokenIdsMap
-  mapping(uint256 => uint256[]) private _participanttokenIdsMap;
+  mapping(uint256 => uint256[]) private _participantTokenIdsMap;
 
   // key -> battleId
   /// @custom:oz-renamed-from _closedMap
@@ -90,7 +91,15 @@ contract Battle is
   // --------------------------------------------------
 
   /// @dev onlyAvailableNFT
-  modifier onlyAvailableNFT(address[] memory nfts) {
+  /// @param nft nft
+  modifier onlyAvailableNFT(address nft) {
+    require(_availableNFTMap[nft], "Battle: nft is not available");
+    _;
+  }
+
+  /// @dev onlyAvailableNFTs
+  /// @param nfts nfts
+  modifier onlyAvailableNFTs(address[] memory nfts) {
     uint256 length = nfts.length;
     require(length != 0, "Battle: nfts is empty");
     for (uint i; i < length; ) {
@@ -139,7 +148,7 @@ contract Battle is
         _availableNFTsMap[battleId],
         _maxParticipantCountMap[battleId],
         _participantNFTsMap[battleId],
-        _participanttokenIdsMap[battleId],
+        _participantTokenIdsMap[battleId],
         _closedMap[battleId]
       );
       unchecked {
@@ -192,12 +201,43 @@ contract Battle is
     string memory description,
     address[] memory availableNFTs,
     uint32 maxParticipantCount
-  ) external onlyAvailableNFT(availableNFTs) {
+  ) external onlyAvailableNFTs(availableNFTs) {
     _titleMap[_totalBattle] = title;
     _descriptionMap[_totalBattle] = description;
     _availableNFTsMap[_totalBattle] = availableNFTs;
     _maxParticipantCountMap[_totalBattle] = maxParticipantCount;
     _totalBattle++;
+  }
+
+  /// @dev Join battle
+  /// @param battleId battleId
+  /// @param participantNFT participantNFT
+  /// @param participantTokenId participantTokenId
+  function join(
+    uint256 battleId,
+    address participantNFT,
+    uint256 participantTokenId
+  ) external onlyAvailableNFT(participantNFT) {
+    // TODO: #17 同じアドレスはバトルに参加できないようにする
+    require(battleId < _totalBattle, "Battle: battleId is out of range");
+    IERC721Upgradeable nft = IERC721Upgradeable(participantNFT);
+    require(
+      nft.ownerOf(participantTokenId) == msg.sender,
+      "Battle: msg.sender is not owner"
+    );
+    for (uint i; i < _participantNFTsMap[battleId].length; ) {
+      if (_participantNFTsMap[battleId][i] == participantNFT) {
+        require(
+          _participantTokenIdsMap[battleId][i] != participantTokenId,
+          "Battle: participant is already joined"
+        );
+      }
+      unchecked {
+        ++i;
+      }
+    }
+    _participantNFTsMap[battleId].push(participantNFT);
+    _participantTokenIdsMap[battleId].push(participantTokenId);
   }
 
   // --------------------------------------------------

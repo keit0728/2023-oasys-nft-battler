@@ -23,7 +23,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
   const selectedBattleIndex = useRecoilValue(selectedBattleIndexState);
   const battle = useBattlesValue()[selectedBattleIndex];
   const [opened, setOpened] = useRecoilState(battleModalOpenedState);
-  const [selectedNFT, setSelectedNFT] = useState(0);
+  const [selectedNFTIndex, setSelectedNFTIndex] = useState(0);
 
   if (!battle) return <></>;
   return (
@@ -64,7 +64,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                       {battle.title}
                     </div>
                     <div className={clsx("")}>
-                      {getParticipantCount(battle.participantTokenIds)} /{" "}
+                      {getParticipantCount(battle.participantTokenIdsMap)} /{" "}
                       {battle.maxParticipantCount}
                     </div>
                   </div>
@@ -73,7 +73,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                 <div className={clsx("flex", "mb-[10px]")}>
                   {battle.availableNFTs.map((availableNFT, index) => {
                     const handleClick = () => {
-                      setSelectedNFT(index);
+                      setSelectedNFTIndex(index);
                     };
                     const imageURL = dummyImages.get(availableNFT);
                     if (imageURL === undefined) return <></>;
@@ -85,7 +85,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                       >
                         <Image
                           className={clsx(
-                            selectedNFT === index ? "" : "opacity-30",
+                            selectedNFTIndex === index ? "" : "opacity-30",
                           )}
                           src={imageURL}
                           alt="NFT"
@@ -98,7 +98,10 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                 </div>
                 <div className={clsx("flex", "justify-between")}>
                   <TokenIdInput className={clsx("mr-[10px]")} />
-                  <JoinButton />
+                  <JoinButton
+                    battle={battle}
+                    selectedNFTIndex={selectedBattleIndex}
+                  />
                 </div>
               </Dialog.Panel>
             </Transition.Child>
