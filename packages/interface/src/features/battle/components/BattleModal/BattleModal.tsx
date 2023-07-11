@@ -88,7 +88,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                             selectedNFT === index ? "" : "opacity-30",
                           )}
                           src={imageURL}
-                          alt="Battle Card"
+                          alt="NFT"
                           width={50}
                           height={50}
                         />

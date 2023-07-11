@@ -1,18 +1,18 @@
 import { ChangeEvent } from "react";
 import { Input } from "@/components/elements/Input";
-import { inputTokenIdState } from "@/stores/inputTokenIdState";
+import { inputTitleState } from "@/stores/inputTitleState";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 import { useRecoilState } from "recoil";
 
-export type TokenIdInputProps = {} & BaseProps;
+export type TitleInputProps = {} & BaseProps;
 
 /**
- * TokenIdInput
+ * TitleInput
  * @keit0728
  */
-export const TokenIdInput = ({ className }: TokenIdInputProps) => {
-  const [input, setInput] = useRecoilState(inputTokenIdState);
+export const TitleInput = ({ className }: TitleInputProps) => {
+  const [input, setInput] = useRecoilState(inputTitleState);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
@@ -22,7 +22,7 @@ export const TokenIdInput = ({ className }: TokenIdInputProps) => {
     <Input
       className={clsx(className)}
       value={input}
-      placeholder="トークンIDを入力"
+      placeholder="タイトルを入力"
       onChange={handleInputChange}
     />
   );
