@@ -36,7 +36,7 @@ export const CreateButton = ({ className }: CreateButtonProps) => {
     setDisable(true);
     setLoading(true);
     try {
-      await battlesController.add(
+      await battlesController.create(
         BattleModel.create({
           title,
           description,

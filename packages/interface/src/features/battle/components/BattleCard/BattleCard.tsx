@@ -49,7 +49,7 @@ export const BattleCard = ({ className, battle, index }: BattleCardProps) => {
             {battle.title}
           </div>
           <div className={clsx("")}>
-            {getParticipantCount(battle.participantTokenIds)} /{" "}
+            {getParticipantCount(battle.participantTokenIdsMap)} /{" "}
             {battle.maxParticipantCount}
           </div>
         </div>

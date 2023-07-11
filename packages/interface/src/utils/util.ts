@@ -11,3 +11,22 @@ export const getParticipantCount = (
   }
   return participantCount;
 };
+
+export const getParticipantTokenIdsMap = (
+  availableNFTs: Address[],
+  participantNFTs: Address[],
+  participantTokenIds: BigInt[],
+): Map<Address, TokenId[]> => {
+  const participantTokenIdsMap = new Map<Address, TokenId[]>();
+  for (let i = 0; i < availableNFTs.length; i++) {
+    participantTokenIdsMap.set(availableNFTs[i], []);
+  }
+  for (let i = 0; i < participantNFTs.length; i++) {
+    const tokenIds = participantTokenIdsMap.get(participantNFTs[i])!;
+    participantTokenIdsMap.set(participantNFTs[i], [
+      ...tokenIds,
+      participantTokenIds[i].toString(),
+    ]);
+  }
+  return participantTokenIdsMap;
+};
