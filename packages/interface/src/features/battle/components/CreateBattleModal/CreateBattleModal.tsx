@@ -1,27 +1,27 @@
 import { Fragment, useState } from "react";
-import { AddButton } from "@/features/battle/components/AddButton";
 import { AvailableNFTsInput } from "@/features/battle/components/AvailableNFTsInput";
+import { CreateButton } from "@/features/battle/components/CreateButton";
 import { DescriptionInput } from "@/features/battle/components/DescriptionInput";
 import { MaxParticipantCountInput } from "@/features/battle/components/MaxParticipantCountInput";
 import { TitleInput } from "@/features/battle/components/TitleInput";
 import { useBattlesValue } from "@/hooks/useBattles";
-import { addBattleModalOpenedState } from "@/stores/addBattleModalOpenedState";
+import { createBattleModalOpenedState } from "@/stores/createBattleModalOpenedState";
 import { selectedBattleIndexState } from "@/stores/selectedBattleIndexState";
 import { BaseProps } from "@/types/BaseProps";
 import { Dialog, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-export type AddBattleModalProps = {} & BaseProps;
+export type CreateBattleModalProps = {} & BaseProps;
 
 /**
- * AddBattleModal
+ * CreateBattleModal
  * @keit0728
  */
-export const AddBattleModal = ({ className }: AddBattleModalProps) => {
+export const CreateBattleModal = ({ className }: CreateBattleModalProps) => {
   const selectedBattleIndex = useRecoilValue(selectedBattleIndexState);
   const battle = useBattlesValue()[selectedBattleIndex];
-  const [opened, setOpened] = useRecoilState(addBattleModalOpenedState);
+  const [opened, setOpened] = useRecoilState(createBattleModalOpenedState);
   const [selectedNFT, setSelectedNFT] = useState(0);
 
   if (!battle) return <></>;
@@ -70,7 +70,7 @@ export const AddBattleModal = ({ className }: AddBattleModalProps) => {
                 <p className={clsx("text-gray-500", "mb-[10px]")}>参加人数</p>
                 <MaxParticipantCountInput className={clsx("mb-[30px]")} />
                 <div className={clsx("flex", "justify-end")}>
-                  <AddButton />
+                  <CreateButton />
                 </div>
               </Dialog.Panel>
             </Transition.Child>

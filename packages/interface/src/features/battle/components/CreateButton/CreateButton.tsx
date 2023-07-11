@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/elements/Button";
 import { useBattlesController } from "@/hooks/useBattles";
 import { BattleModel } from "@/models/BattleModel";
-import { addBattleModalOpenedState } from "@/stores/addBattleModalOpenedState";
+import { createBattleModalOpenedState } from "@/stores/createBattleModalOpenedState";
 import { disabledState } from "@/stores/disabledState";
 import { inputAvailableNFTsState } from "@/stores/inputAvailableNFTsState";
 import { inputDescriptionState } from "@/stores/inputDescriptionState";
@@ -12,15 +12,15 @@ import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
-export type AddButtonProps = {} & BaseProps;
+export type CreateButtonProps = {} & BaseProps;
 
 /**
- * AddButton
+ * CreateButton
  * @keit0728
  */
-export const AddButton = ({ className }: AddButtonProps) => {
+export const CreateButton = ({ className }: CreateButtonProps) => {
   const battlesController = useBattlesController();
-  const setBattleModalOpened = useSetRecoilState(addBattleModalOpenedState);
+  const setBattleModalOpened = useSetRecoilState(createBattleModalOpenedState);
   const [title, setTitle] = useRecoilState(inputTitleState);
   const [description, setDescription] = useRecoilState(inputDescriptionState);
   const [availableNFTs, setAvailableNFTs] = useRecoilState(
@@ -70,7 +70,7 @@ export const AddButton = ({ className }: AddButtonProps) => {
       loading={loading}
       onClick={handleClick}
     >
-      追加する
+      作成する
     </Button>
   );
 };

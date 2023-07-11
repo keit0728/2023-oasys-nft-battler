@@ -1,18 +1,20 @@
 import Image from "next/image";
 import { Button } from "@/components/elements/Button";
-import { addBattleModalOpenedState } from "@/stores/addBattleModalOpenedState";
+import { createBattleModalOpenedState } from "@/stores/createBattleModalOpenedState";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
 import { useSetRecoilState } from "recoil";
 
-export type OpenAddModalButtonProps = {} & BaseProps;
+export type OpenCreateModalButtonProps = {} & BaseProps;
 
 /**
- * OpenAddModalButton
+ * OpenCreateModalButton
  * @keit0728
  */
-export const OpenAddModalButton = ({ className }: OpenAddModalButtonProps) => {
-  const setBattleModalOpened = useSetRecoilState(addBattleModalOpenedState);
+export const OpenCreateModalButton = ({
+  className,
+}: OpenCreateModalButtonProps) => {
+  const setBattleModalOpened = useSetRecoilState(createBattleModalOpenedState);
 
   const handleClick = () => {
     setBattleModalOpened(true);

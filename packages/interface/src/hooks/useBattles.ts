@@ -1,4 +1,4 @@
-import { dummyBattles } from "@/const/dummy";
+import { ClientBattle } from "@/features/battle/api/contracts/ClientBattle";
 import { BattleModel } from "@/models/BattleModel";
 import { BattlesState, battlesState } from "@/stores/battlesState";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -19,13 +19,34 @@ export const useBattlesController = (): BattlesController => {
    * init
    */
   const init = async (): Promise<void> => {
-    setBattles(dummyBattles);
+    const battleContract = ClientBattle.instance();
+    const totalBattle = await battleContract.getTotalBattle();
+    const tokenIds: BigInt[] = [];
+    for (let i = 0; i < Number(totalBattle); i++) {
+      tokenIds.push(BigInt(i));
+    }
+    const data = await battleContract.getBattles(tokenIds);
+    const battles: BattleModel[] = [];
+    for (let i = 0; i < data.length; i++) {
+      battles.push(
+        BattleModel.create({
+          title: data[i].title,
+          description: data[i].description,
+          availableNFTs: data[i].availableNFTs,
+          maxParticipantCount: data[i].maxParticipantCount,
+        }),
+      );
+    }
+    setBattles(battles);
   };
 
   /**
    * add
    */
   const add = async (battle: BattleModel): Promise<void> => {
+    const battleContract = ClientBattle.instance();
+    console.log(battle);
+    await battleContract.create(battle);
     setBattles((prevState) => [...prevState, battle]);
   };
 

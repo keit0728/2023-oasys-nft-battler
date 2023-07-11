@@ -1,7 +1,7 @@
-import { AddBattleModal } from "@/features/battle/components/AddBattleModal";
 import { BattleCard } from "@/features/battle/components/BattleCard";
 import { BattleModal } from "@/features/battle/components/BattleModal";
-import { OpenAddModalButton } from "@/features/battle/components/OpenAddModalButton";
+import { CreateBattleModal } from "@/features/battle/components/CreateBattleModal";
+import { OpenCreateModalButton } from "@/features/battle/components/OpenCreateModalButton";
 import { useBattlesValue } from "@/hooks/useBattles";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
@@ -28,9 +28,9 @@ export const MainHome = ({ className }: MainHomeProps) => {
         "mb-[20px]",
       )}
     >
-      <OpenAddModalButton />
+      <OpenCreateModalButton />
       <BattleModal />
-      <AddBattleModal />
+      <CreateBattleModal />
       <div className={clsx("flex", "flex-wrap", "justify-evenly", "w-[100%]")}>
         {battles.map((battle, index) => {
           return (
