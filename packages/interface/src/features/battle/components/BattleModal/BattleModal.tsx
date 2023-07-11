@@ -58,7 +58,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="m-6 w-full max-w-2xl transform overflow-hidden rounded-lg p-6 text-left align-middle shadow-xl transition-all border-[1px] bg-primary border-primaryBorder">
-                <div className={clsx("mb-[10px]")}>
+                <div className={clsx("mb-[50px]")}>
                   <div className={clsx("flex", "justify-between")}>
                     <div className={clsx("font-bold", "text-xl", "mb-[10px]")}>
                       {battle.title}

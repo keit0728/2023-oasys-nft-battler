@@ -4,7 +4,7 @@
     "node": "npx hardhat node",
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
-    "test-make-quest": "REPORT_GAS=true npx hardhat test test/make-quest/MakeQuest.ts",
+    "test-battle": "REPORT_GAS=true npx hardhat test test/battle/Battle.ts",
     "predeploy": "npm run test-$npm_config_name",
     "deploy": "npx hardhat run scripts/$npm_config_name/deploy.ts --network $npm_config_network",
     "post-deploy": "npx hardhat run scripts/$npm_config_name/post-deploy.ts --network $npm_config_network",
