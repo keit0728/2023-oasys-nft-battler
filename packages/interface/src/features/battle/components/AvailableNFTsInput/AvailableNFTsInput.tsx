@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { dummyImages } from "@/const/dummy";
+import { CRYPTO_SPELLS, MCH_HERO, dummyImages } from "@/const/dummy";
 import { inputAvailableNFTsState } from "@/stores/inputAvailableNFTsState";
 import { BaseProps } from "@/types/BaseProps";
 import clsx from "clsx";
@@ -22,6 +22,10 @@ export const AvailableNFTsInput = ({ className }: AvailableNFTsInputProps) => {
     <div className={clsx(className, "flex")}>
       {keys.map((key) => {
         const handleClick = () => {
+          if (key === MCH_HERO || key === CRYPTO_SPELLS) {
+            alert("このNFTは未対応です🙇‍♂️");
+            return;
+          }
           setAvailableNFTs((prevState) => {
             if (prevState.includes(key))
               return prevState.filter((prevKey) => prevKey !== key);

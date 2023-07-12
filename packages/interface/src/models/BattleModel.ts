@@ -15,6 +15,7 @@ export class BattleModel extends ObjectCopier {
    * @param availableNFTs 利用可能なNFT
    * @param maxParticipantCount 最大参加者数
    * @param participantTokenIdsMap 参加者のトークンID
+   * @param result 戦闘結果
    */
   private constructor(
     public readonly id: string = "",
@@ -26,6 +27,7 @@ export class BattleModel extends ObjectCopier {
       Address,
       TokenId[]
     >(),
+    public readonly result: string = "",
   ) {
     super();
   }

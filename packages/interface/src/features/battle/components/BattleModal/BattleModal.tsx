@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import Image from "next/image";
 import { dummyImages } from "@/const/dummy";
 import { JoinButton } from "@/features/battle/components/JoinButton";
+import { ResultButton } from "@/features/battle/components/ResultButton";
 import { TokenIdInput } from "@/features/battle/components/TokenIdInput";
 import { useBattlesValue } from "@/hooks/useBattles";
 import { battleModalOpenedState } from "@/stores/battleModalOpenedState";
@@ -26,6 +27,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
   const [selectedNFTIndex, setSelectedNFTIndex] = useState(0);
 
   if (!battle) return <></>;
+  const participantCount = getParticipantCount(battle.participantTokenIdsMap);
   return (
     <Transition appear show={opened} as={Fragment}>
       <Dialog
@@ -64,8 +66,7 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                       {battle.title}
                     </div>
                     <div className={clsx("")}>
-                      {getParticipantCount(battle.participantTokenIdsMap)} /{" "}
-                      {battle.maxParticipantCount}
+                      {participantCount} / {battle.maxParticipantCount}
                     </div>
                   </div>
                   <p className={clsx("text-gray-500")}>{battle.description}</p>
@@ -85,7 +86,11 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                       >
                         <Image
                           className={clsx(
-                            selectedNFTIndex === index ? "" : "opacity-30",
+                            participantCount >= battle.maxParticipantCount
+                              ? ""
+                              : selectedNFTIndex === index
+                              ? ""
+                              : "opacity-30",
                           )}
                           src={imageURL}
                           alt="NFT"
@@ -97,12 +102,42 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                   })}
                 </div>
                 <div className={clsx("flex", "justify-between")}>
-                  <TokenIdInput className={clsx("mr-[10px]")} />
-                  <JoinButton
-                    battle={battle}
-                    selectedNFTIndex={selectedBattleIndex}
-                  />
+                  {participantCount >= battle.maxParticipantCount ? (
+                    <>
+                      <div className={clsx("mr-[10px]")} />
+                      <ResultButton battle={battle} />
+                    </>
+                  ) : (
+                    <>
+                      <TokenIdInput className={clsx("mr-[10px]")} />
+                      <JoinButton
+                        battle={battle}
+                        selectedNFTIndex={selectedNFTIndex}
+                      />
+                    </>
+                  )}
                 </div>
+                {battle.result === "" ? (
+                  <></>
+                ) : (
+                  <div
+                    className={clsx(
+                      "mt-[30px]",
+                      "border-[1px]",
+                      "border-primaryBorder",
+                      "rounded-lg",
+                      "p-[10px]",
+                      "h-[200px]",
+                      "overflow-y-scroll",
+                      "text-[14px]",
+                      "whitespace-pre-wrap",
+                      "md:h-[500px]",
+                      "md:text-[16px]",
+                    )}
+                  >
+                    {battle.result}
+                  </div>
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>

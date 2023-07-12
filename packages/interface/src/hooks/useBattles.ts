@@ -2,6 +2,7 @@ import { ClientBattle } from "@/features/battle/api/contracts/ClientBattle";
 import { BattleModel } from "@/models/BattleModel";
 import { BattlesState, battlesState } from "@/stores/battlesState";
 import { getParticipantTokenIdsMap } from "@/utils/util";
+import axios from "axios";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Address } from "viem";
 
@@ -13,6 +14,7 @@ export interface BattlesController {
     participantNFT: Address,
     participantTokenId: string,
   ) => Promise<void>;
+  fight: (battleId: string) => Promise<void>;
 }
 
 export const useBattlesValue = (): BattlesState => {
@@ -90,11 +92,8 @@ export const useBattlesController = (): BattlesController => {
     setBattles((prevState) => {
       return prevState.map((battle) => {
         if (battle.id !== battleId) return battle;
-        console.log(battle.id);
         const tokenIds = battle.participantTokenIdsMap.get(participantNFT)!;
-        console.log(tokenIds);
         const newParticipantTokenIds = new Map(battle.participantTokenIdsMap);
-        console.log(newParticipantTokenIds);
         newParticipantTokenIds.set(participantNFT, [
           ...tokenIds,
           participantTokenId,
@@ -106,10 +105,37 @@ export const useBattlesController = (): BattlesController => {
     });
   };
 
+  /**
+   * fight
+   * @param battleId battleId
+   */
+  const fight = async (battleId: string): Promise<void> => {
+    let res: any;
+    try {
+      res = await axios.post("/api/battle/fight", {
+        battleId,
+      });
+    } catch (e) {
+      if (axios.isAxiosError(e)) throw new Error(e.response!.data.message);
+      console.error(e);
+      throw new Error("Unknown Error");
+    }
+    const result = res.data.result;
+    setBattles((prevState) => {
+      return prevState.map((battle) => {
+        if (battle.id !== battleId) return battle;
+        return battle.copyWith({
+          result,
+        });
+      });
+    });
+  };
+
   const controller: BattlesController = {
     init,
     create,
     join,
+    fight,
   };
   return controller;
 };

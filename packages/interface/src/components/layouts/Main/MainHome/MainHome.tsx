@@ -31,12 +31,12 @@ export const MainHome = ({ className }: MainHomeProps) => {
       <OpenCreateModalButton />
       <BattleModal />
       <CreateBattleModal />
-      <div className={clsx("flex", "flex-wrap", "justify-evenly", "w-[100%]")}>
+      <div className={clsx("flex", "flex-wrap", "justify-start", "w-[100%]")}>
         {battles.map((battle, index) => {
           return (
             <BattleCard
               key={uuid()}
-              className={clsx("w-[40%]", "mx-[5px]", "my-[30px]")}
+              className={clsx("w-[40%]", "mx-[30px]", "my-[30px]")}
               battle={battle}
               index={index}
             />
