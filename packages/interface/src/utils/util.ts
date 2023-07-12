@@ -30,3 +30,12 @@ export const getParticipantTokenIdsMap = (
   }
   return participantTokenIdsMap;
 };
+
+export const decodeBase64 = (data: string): string => {
+  let base64Marker = ";base64,";
+  let base64Index = data.indexOf(base64Marker) + base64Marker.length;
+  let base64Data = data.substring(base64Index);
+  let buffer = Buffer.from(base64Data, "base64");
+  let decodedData = buffer.toString("utf8");
+  return decodedData;
+};

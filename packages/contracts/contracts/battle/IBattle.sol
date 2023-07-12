@@ -89,4 +89,10 @@ interface IBattle {
     address participantNFT,
     uint256 participantTokenId
   ) external;
+
+  /// @dev getBatchTokenURI
+  /// @param battleId battleId
+  function getBatchTokenURI(
+    uint256 battleId
+  ) external view returns (string[] memory returnValue);
 }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
 import {IBattle} from "./IBattle.sol";
 
@@ -102,7 +102,7 @@ contract Battle is
   modifier onlyAvailableNFTs(address[] memory nfts) {
     uint256 length = nfts.length;
     require(length != 0, "Battle: nfts is empty");
-    for (uint i; i < length; ) {
+    for (uint256 i; i < length; ) {
       require(_availableNFTMap[nfts[i]], "Battle: nft is not available");
       unchecked {
         ++i;
@@ -139,7 +139,7 @@ contract Battle is
   ) external view returns (Battle[] memory returnValue) {
     uint256 length = battleIds.length;
     returnValue = new Battle[](length);
-    for (uint i; i < length; ) {
+    for (uint256 i; i < length; ) {
       uint256 battleId = battleIds[i];
       require(battleId < _totalBattle, "Battle: battleId is out of range");
       returnValue[i] = Battle(
@@ -220,12 +220,17 @@ contract Battle is
   ) external onlyAvailableNFT(participantNFT) {
     // TODO: #17 同じアドレスはバトルに参加できないようにする
     require(battleId < _totalBattle, "Battle: battleId is out of range");
-    IERC721Upgradeable nft = IERC721Upgradeable(participantNFT);
+    uint256 length = _participantNFTsMap[battleId].length;
+    require(
+      length < _maxParticipantCountMap[battleId],
+      "Battle: max participant count is reached"
+    );
+    ERC721Upgradeable nft = ERC721Upgradeable(participantNFT);
     require(
       nft.ownerOf(participantTokenId) == msg.sender,
       "Battle: msg.sender is not owner"
     );
-    for (uint i; i < _participantNFTsMap[battleId].length; ) {
+    for (uint256 i; i < length; ) {
       if (_participantNFTsMap[battleId][i] == participantNFT) {
         require(
           _participantTokenIdsMap[battleId][i] != participantTokenId,
@@ -238,6 +243,24 @@ contract Battle is
     }
     _participantNFTsMap[battleId].push(participantNFT);
     _participantTokenIdsMap[battleId].push(participantTokenId);
+  }
+
+  /// @dev getBatchTokenURI
+  /// @param battleId battleId
+  function getBatchTokenURI(
+    uint256 battleId
+  ) external view returns (string[] memory returnValue) {
+    address[] memory participantNFTs = _participantNFTsMap[battleId];
+    uint256[] memory participantTokenIds = _participantTokenIdsMap[battleId];
+    uint256 length = participantNFTs.length;
+    returnValue = new string[](length);
+    for (uint256 i; i < length; ) {
+      ERC721Upgradeable nft = ERC721Upgradeable(participantNFTs[i]);
+      returnValue[i] = nft.tokenURI(participantTokenIds[i]);
+      unchecked {
+        ++i;
+      }
+    }
   }
 
   // --------------------------------------------------
