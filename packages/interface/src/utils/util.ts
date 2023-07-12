@@ -39,3 +39,7 @@ export const decodeBase64 = (data: string): string => {
   let decodedData = buffer.toString("utf8");
   return decodedData;
 };
+
+export const isNumber = (value: string) => {
+  return !isNaN(parseFloat(value));
+};
