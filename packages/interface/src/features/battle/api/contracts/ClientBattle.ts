@@ -48,6 +48,20 @@ export class ClientBattle {
     });
   };
 
+  /**
+   * getBatchTokenURI
+   * @param battleId battleId
+   * @return {Promise<any>} token ID
+   */
+  getBatchTokenURI = async (battleId: BigInt): Promise<any> => {
+    return await this._wallet.client.readContract({
+      address: process.env.NEXT_PUBLIC_BATTLE_CONTRACT as `0x${string}`,
+      abi: Battle.abi,
+      functionName: "getBatchTokenURI",
+      args: [battleId],
+    });
+  };
+
   // ---------------------------------------------------------
   // setter
   // ---------------------------------------------------------
