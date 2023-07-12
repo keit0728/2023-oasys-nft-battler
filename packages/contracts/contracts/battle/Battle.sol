@@ -249,14 +249,22 @@ contract Battle is
   /// @param battleId battleId
   function getBatchTokenURI(
     uint256 battleId
-  ) external view returns (string[] memory returnValue) {
-    address[] memory participantNFTs = _participantNFTsMap[battleId];
-    uint256[] memory participantTokenIds = _participantTokenIdsMap[battleId];
+  )
+    external
+    view
+    returns (
+      string[] memory tokenURIs,
+      address[] memory participantNFTs,
+      uint256[] memory participantTokenIds
+    )
+  {
+    participantNFTs = _participantNFTsMap[battleId];
+    participantTokenIds = _participantTokenIdsMap[battleId];
     uint256 length = participantNFTs.length;
-    returnValue = new string[](length);
+    tokenURIs = new string[](length);
     for (uint256 i; i < length; ) {
       ERC721Upgradeable nft = ERC721Upgradeable(participantNFTs[i]);
-      returnValue[i] = nft.tokenURI(participantTokenIds[i]);
+      tokenURIs[i] = nft.tokenURI(participantTokenIds[i]);
       unchecked {
         ++i;
       }

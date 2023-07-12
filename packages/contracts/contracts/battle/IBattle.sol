@@ -94,5 +94,12 @@ interface IBattle {
   /// @param battleId battleId
   function getBatchTokenURI(
     uint256 battleId
-  ) external view returns (string[] memory returnValue);
+  )
+    external
+    view
+    returns (
+      string[] memory tokenURIs,
+      address[] memory participantNFTs,
+      uint256[] memory participantTokenIds
+    );
 }

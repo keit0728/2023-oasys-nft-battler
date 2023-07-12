@@ -2,12 +2,12 @@ import { Address } from "@/types/Address";
 import { TokenId } from "@/types/TokenId";
 
 export const getParticipantCount = (
-  participantTokenIds: Map<Address, TokenId[]>,
+  participantTokenIdsMap: Map<Address, TokenId[]>,
 ): number => {
-  const keys = Array.from(participantTokenIds.keys());
+  const keys = Array.from(participantTokenIdsMap.keys());
   let participantCount = 0;
   for (let i = 0; i < keys.length; i++) {
-    participantCount += participantTokenIds.get(keys[i])?.length ?? 0;
+    participantCount += participantTokenIdsMap.get(keys[i])?.length ?? 0;
   }
   return participantCount;
 };

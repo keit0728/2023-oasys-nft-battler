@@ -50,7 +50,7 @@ export const JoinButton = ({
     setDisable(false);
     setLoading(false);
     setTokenId("");
-    setBattleModalOpened(false);
+    // setBattleModalOpened(false);
   };
   return (
     <Button

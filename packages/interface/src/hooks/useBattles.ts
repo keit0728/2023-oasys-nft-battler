@@ -1,7 +1,7 @@
 import { ClientBattle } from "@/features/battle/api/contracts/ClientBattle";
 import { BattleModel } from "@/models/BattleModel";
 import { BattlesState, battlesState } from "@/stores/battlesState";
-import { getParticipantTokenIdsMap } from "@/utils/util";
+import { decodeBase64, getParticipantTokenIdsMap } from "@/utils/util";
 import axios from "axios";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Address } from "viem";
@@ -15,6 +15,7 @@ export interface BattlesController {
     participantTokenId: string,
   ) => Promise<void>;
   fight: (battleId: string) => Promise<void>;
+  getParticipant: (battleId: string) => Promise<[any[], any[], any[]]>;
 }
 
 export const useBattlesValue = (): BattlesState => {
@@ -64,9 +65,16 @@ export const useBattlesController = (): BattlesController => {
     await battleContract.create(battle);
     // TODO: #18 nonceを使って割り振られたバトルIDを取得
     const totalBattle = await battleContract.getTotalBattle();
+    const participantTokenIdsMap = new Map<Address, string[]>();
+    for (let i = 0; i < battle.availableNFTs.length; i++) {
+      participantTokenIdsMap.set(battle.availableNFTs[i], []);
+    }
     setBattles((prevState) => [
       ...prevState,
-      battle.copyWith({ id: totalBattle.toString() }),
+      battle.copyWith({
+        id: (Number(totalBattle) - 1).toString(),
+        participantTokenIdsMap,
+      }),
     ]);
   };
 
@@ -131,11 +139,49 @@ export const useBattlesController = (): BattlesController => {
     });
   };
 
+  /**
+   * getParticipant
+   * @param battleId battleId
+   */
+  const getParticipant = async (
+    battleId: string,
+  ): Promise<[any[], any[], any[]]> => {
+    const battleContract = ClientBattle.instance();
+    const data = await battleContract.getBatchTokenURI(BigInt(battleId));
+    const tokenURIs: any[] = [];
+    for (let i = 0; i < data[0].length; i++) {
+      tokenURIs.push(JSON.parse(decodeBase64(data[0][i])));
+    }
+    const participantNFTs = data[1];
+    const participantTokenIds = data[2];
+    return [tokenURIs, participantNFTs, participantTokenIds];
+    // let res: any;
+    // try {
+    //   res = await axios.post("/api/battle/fight", {
+    //     battleId,
+    //   });
+    // } catch (e) {
+    //   if (axios.isAxiosError(e)) throw new Error(e.response!.data.message);
+    //   console.error(e);
+    //   throw new Error("Unknown Error");
+    // }
+    // const result = res.data.result;
+    // setBattles((prevState) => {
+    //   return prevState.map((battle) => {
+    //     if (battle.id !== battleId) return battle;
+    //     return battle.copyWith({
+    //       result,
+    //     });
+    //   });
+    // });
+  };
+
   const controller: BattlesController = {
     init,
     create,
     join,
     fight,
+    getParticipant,
   };
   return controller;
 };

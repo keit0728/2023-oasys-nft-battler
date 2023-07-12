@@ -4,15 +4,17 @@ import { dummyImages } from "@/const/dummy";
 import { JoinButton } from "@/features/battle/components/JoinButton";
 import { ResultButton } from "@/features/battle/components/ResultButton";
 import { TokenIdInput } from "@/features/battle/components/TokenIdInput";
-import { useBattlesValue } from "@/hooks/useBattles";
+import { useBattlesController, useBattlesValue } from "@/hooks/useBattles";
+import { useLayoutEffectOfSSR } from "@/hooks/useLayoutEffectOfSSR";
 import { battleModalOpenedState } from "@/stores/battleModalOpenedState";
+import { disabledState } from "@/stores/disabledState";
 import { selectedBattleIndexState } from "@/stores/selectedBattleIndexState";
 import { BaseProps } from "@/types/BaseProps";
 import { getParticipantCount } from "@/utils/util";
 import { Dialog, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import uuid from "react-uuid";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 export type BattleModalProps = {} & BaseProps;
 
@@ -23,11 +25,42 @@ export type BattleModalProps = {} & BaseProps;
 export const BattleModal = ({ className }: BattleModalProps) => {
   const selectedBattleIndex = useRecoilValue(selectedBattleIndexState);
   const battle = useBattlesValue()[selectedBattleIndex];
+  const battlesController = useBattlesController();
   const [opened, setOpened] = useRecoilState(battleModalOpenedState);
   const [selectedNFTIndex, setSelectedNFTIndex] = useState(0);
+  const setDisabled = useSetRecoilState(disabledState);
+  const [tokenURIs, setTokenURIs] = useState<any[]>([]);
+  const [participantNFTs, setParticipantNFTs] = useState<any[]>([]);
+  const [participantTokenIds, setParticipantTokenIds] = useState<any[]>([]);
+
+  const getParticipant = async () => {
+    setDisabled(true);
+    setTokenURIs([]);
+    setParticipantNFTs([]);
+    setParticipantTokenIds([]);
+    try {
+      const [newTokenURIs, newParticipantNFTs, newParticipantTokenIds] =
+        await battlesController.getParticipant(battle.id);
+      setTokenURIs(newTokenURIs);
+      setParticipantNFTs(newParticipantNFTs);
+      setParticipantTokenIds(newParticipantTokenIds);
+    } catch (e) {
+      console.error(e);
+      if (e instanceof Error) {
+        alert("エラー\n\nReason: " + e.message);
+      } else alert("エラー\n\nReason: " + e);
+    }
+    setDisabled(false);
+  };
+
+  useLayoutEffectOfSSR(() => {
+    if (!battle) return;
+    getParticipant();
+  }, [battle]);
 
   if (!battle) return <></>;
   const participantCount = getParticipantCount(battle.participantTokenIdsMap);
+  const keys = Array.from(battle.participantTokenIdsMap.keys());
   return (
     <Transition appear show={opened} as={Fragment}>
       <Dialog
@@ -59,19 +92,92 @@ export const BattleModal = ({ className }: BattleModalProps) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="m-6 w-full max-w-2xl transform overflow-hidden rounded-lg p-6 text-left align-middle shadow-xl transition-all border-[1px] bg-primary border-primaryBorder">
-                <div className={clsx("mb-[50px]")}>
-                  <div className={clsx("flex", "justify-between")}>
-                    <div className={clsx("font-bold", "text-xl", "mb-[10px]")}>
-                      {battle.title}
-                    </div>
-                    <div className={clsx("")}>
-                      {participantCount} / {battle.maxParticipantCount}
-                    </div>
-                  </div>
-                  <p className={clsx("text-gray-500")}>{battle.description}</p>
+              <Dialog.Panel className="m-6 w-full max-w-2xl transform overflow-hidden rounded-lg p-6 text-left align-middle shadow-xl transition-all border-[1px] bg-primary border-primaryBorder relative">
+                <div className={clsx("absolute", "right-[24px]")}>
+                  {participantCount} / {battle.maxParticipantCount}
                 </div>
-                <div className={clsx("flex", "mb-[10px]")}>
+                <div className={clsx("mb-[30px]")}>
+                  <div
+                    className={clsx(
+                      "font-bold",
+                      "text-lg",
+                      "mb-[10px]",
+                      "w-[80%]",
+                      "md:text-xl",
+                      "md:w-[90%]",
+                    )}
+                  >
+                    {battle.title}
+                  </div>
+                  <p
+                    className={clsx(
+                      "text-gray-500",
+                      "text-[12px]",
+                      "md:text-[16px]",
+                    )}
+                  >
+                    {battle.description}
+                  </p>
+                </div>
+                {participantCount === 0 ? (
+                  <></>
+                ) : (
+                  <>
+                    <p
+                      className={clsx(
+                        "text-gray-500",
+                        "mb-[10px]",
+                        "text-[12px]",
+                        "md:text-[16px]",
+                      )}
+                    >
+                      参加者
+                    </p>
+                    <div
+                      className={clsx(
+                        "border-[1px]",
+                        "border-primaryBorder",
+                        "rounded-lg",
+                        "p-[10px]",
+                        "h-[70px]",
+                        "overflow-y-scroll",
+                        "text-[14px]",
+                        "whitespace-pre-wrap",
+                        "md:h-[100px]",
+                        "md:text-[16px]",
+                      )}
+                    >
+                      {tokenURIs.length === 0 ? (
+                        <></>
+                      ) : (
+                        tokenURIs.map((tokenURI, i) => {
+                          const imageURL = dummyImages.get(participantNFTs[i])!;
+                          return (
+                            <div
+                              key={uuid()}
+                              className={clsx("flex", "mb-[10px]")}
+                            >
+                              <Image
+                                className={clsx("mr-[10px]")}
+                                src={imageURL}
+                                alt="NFT"
+                                width={20}
+                                height={20}
+                              />
+                              <div className={clsx("mr-[10px]")}>
+                                {participantTokenIds[i].toString()}
+                              </div>
+                              <div className={clsx("")}>
+                                {tokenURIs[i].name}
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </>
+                )}
+                <div className={clsx("flex", "mt-[30px]", "mb-[20px]")}>
                   {battle.availableNFTs.map((availableNFT, index) => {
                     const handleClick = () => {
                       setSelectedNFTIndex(index);
@@ -91,6 +197,10 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                               : selectedNFTIndex === index
                               ? ""
                               : "opacity-30",
+                            "w-[40px]",
+                            "h-[40px]",
+                            "md:w-[50px]",
+                            "md:h-[50px]",
                           )}
                           src={imageURL}
                           alt="NFT"
@@ -122,16 +232,16 @@ export const BattleModal = ({ className }: BattleModalProps) => {
                 ) : (
                   <div
                     className={clsx(
-                      "mt-[30px]",
+                      "mt-[10px]",
                       "border-[1px]",
                       "border-primaryBorder",
                       "rounded-lg",
                       "p-[10px]",
-                      "h-[200px]",
+                      "h-[170px]",
                       "overflow-y-scroll",
-                      "text-[14px]",
+                      "text-[12px]",
                       "whitespace-pre-wrap",
-                      "md:h-[500px]",
+                      "md:h-[400px]",
                       "md:text-[16px]",
                     )}
                   >

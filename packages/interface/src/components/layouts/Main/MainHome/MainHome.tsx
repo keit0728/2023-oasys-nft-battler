@@ -36,7 +36,7 @@ export const MainHome = ({ className }: MainHomeProps) => {
           return (
             <BattleCard
               key={uuid()}
-              className={clsx("w-[40%]", "mx-[30px]", "my-[30px]")}
+              className={clsx("w-[90%]", "m-[15px]", "md:w-[45%]")}
               battle={battle}
               index={index}
             />

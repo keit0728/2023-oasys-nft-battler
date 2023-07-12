@@ -45,11 +45,10 @@ export default async function handler(
   const battle = battles[0];
   console.log(prefixLog, "battle:", battle);
 
-  const base64TokenURIs = await severBattle.getBatchTokenURI(BigInt(battleId));
-  // const tokenURIs: string[] = [];
+  const [data] = await severBattle.getBatchTokenURI(BigInt(battleId));
   const tokenURIs: any[] = [];
-  for (let i = 0; i < base64TokenURIs.length; i++) {
-    tokenURIs.push(JSON.parse(decodeBase64(base64TokenURIs[i])));
+  for (let i = 0; i < data.length; i++) {
+    tokenURIs.push(JSON.parse(decodeBase64(data[i])));
     delete tokenURIs[i].image;
   }
   console.log(prefixLog, "tokenURIs:", tokenURIs);

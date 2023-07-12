@@ -33,6 +33,8 @@ export const Button = ({
         "font-bold",
         rounded === "rounded-full" ? "px-[10px]" : "px-[16px]",
         "py-[10px]",
+        "text-[12px]",
+        "md:text-[16px]",
       )}
       onClick={onClick}
     >
